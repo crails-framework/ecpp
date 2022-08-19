@@ -2,6 +2,8 @@
 
 using namespace std;
 
+void throw_template_error(std::string_view error_desc, const std::string& source, unsigned int cursor, unsigned int header_lines);
+
 static void initialize_property_status(EcppProperty& property)
 {
   // - Move pointers symbols to the type
@@ -47,6 +49,8 @@ EcppPropertyParser::EcppPropertyParser(const std::string& source, unsigned int& 
       advance_value();
   }
   initialize_property_status(property);
+  if (property.reference && !property.shared)
+    throw_template_error("unshared reference (probably missing a @)", source, cursor, -1);
 }
 
 void EcppPropertyParser::advance_type()

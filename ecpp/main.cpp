@@ -11,6 +11,18 @@ using namespace boost;
 
 std::string ecpp_generate(const std::string& source, const EcppOptions& options);
 
+void throw_template_error(std::string_view error_desc, const std::string& source, unsigned int cursor, unsigned int header_lines)
+{
+  std::stringstream message;
+  unsigned int line = 1 + header_lines;
+  unsigned int col = 0;
+
+  for (unsigned int i = 0 ; i < cursor ; ++i, ++col)
+  { if (source[i] == '\n') { line++; col = 0; } }
+  message << "line " << line << ':' << col << " > " << error_desc;
+  throw std::runtime_error(message.str());
+}
+
 static string path_to_classname(const std::string& path)
 {
   string result;
