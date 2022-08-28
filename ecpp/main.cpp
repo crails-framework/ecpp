@@ -1,13 +1,15 @@
 #include <crails/utils/string.hpp>
 #include <crails/read_file.hpp>
+#include <crails/renderer.hpp>
 #include <boost/program_options.hpp>
 #include <iostream>
 #include "ecpp_header_parser.hpp"
 #include "ecpp_body.hpp"
-#include <crails/_libcrails_placeholder.hpp>
 
 using namespace std;
 using namespace boost;
+
+const string Crails::Renderer::default_format = "*";
 
 std::string ecpp_generate(const std::string& source, const EcppOptions& options);
 

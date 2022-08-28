@@ -30,6 +30,10 @@ EcppMarkupBody::EcppMarkupBody(const string& source, unsigned int header_lines, 
       advance_in_cpp_context();
   }
   if (context == RawContext) *this << "\";";
+  if (yield_depth > 0)
+    throw_template_error("unclosed yields block", source, cursor, header_lines);
+  if (do_depth > 0)
+    throw_template_error("unclosed do block", source, cursor, header_lines);
 }
 
 bool EcppMarkupBody::try_to_start_cpp_context()
