@@ -8,5 +8,5 @@ url: https://github.com/crails-framework/ecpp.git
 email: michael@unetresgrossebite.com
 depends: * build2 >= 0.15.0
 depends: * bpkg >= 0.15.0
-depends: { libboost-program-options libboost-filesystem libboost-system } >= 1.74.0
+depends: { libboost-program-options libboost-filesystem libboost-process } >= 1.74.0
 depends: { libcrails-renderer libcrails-templates libcrails-semantics libcrails-readfile } ^2.0.0
