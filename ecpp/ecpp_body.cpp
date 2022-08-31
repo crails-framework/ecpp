@@ -75,6 +75,8 @@ void EcppMarkupBody::advance_in_raw_context()
     should_ignore_next_line_return = false;
     cursor++;
   }
+  else if (source[cursor] == '\\')
+    *this << "\\" << source[cursor++];
   else
     *this << source[cursor++];
 }
