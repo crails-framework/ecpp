@@ -13,6 +13,7 @@ static string ecpp_result(const EcppHeader& header, const string& body, const Ec
 
   result
     << "#include <sstream>" << endl
+    << "#include \"" << options.crails_include << "render_target.hpp\"" << endl
     << "#include \"" << options.crails_include << "shared_vars.hpp\"" << endl
     << "#include \"" << options.parent_header << '"' << endl;
    for (auto preprocessor_line : header.preprocessor)
@@ -26,8 +27,8 @@ static string ecpp_result(const EcppHeader& header, const string& body, const Ec
 
   // Constructor and property initializers
   result
-    << "  " << header.name << "(const Crails::Renderer* renderer, Crails::SharedVars& vars) :" << endl
-    << "    " << options.parent_class << "(renderer, vars)";
+    << "  " << header.name << "(const Crails::Renderer& renderer, Crails::RenderTarget& target, Crails::SharedVars& vars) :" << endl
+    << "    " << options.parent_class << "(renderer, target, vars)";
   for (auto property : header.properties)
   {
     if (property_has_initializer(property))
@@ -59,10 +60,10 @@ static string ecpp_result(const EcppHeader& header, const string& body, const Ec
 
   // Render
   result
-    << "  std::string render()" << endl
+    << "  void render()" << endl
     << "  {" << endl
     << body << endl
-    << "    return " << options.out_property_name << ".str();" << endl
+    << "    this->target.set_body(" << options.out_property_name << ".str());" << endl
     << "  }" << endl;
 
   // Properties
@@ -74,10 +75,10 @@ static string ecpp_result(const EcppHeader& header, const string& body, const Ec
 
   // Exported function
   result
-    << "std::string render_" << Crails::underscore(header.name.data())
-    << "(const Crails::Renderer* renderer, Crails::SharedVars& vars)" << endl
+    << "void render_" << Crails::underscore(header.name.data())
+    << "(const Crails::Renderer& renderer, Crails::RenderTarget& target, Crails::SharedVars& vars)" << endl
     << '{' << endl
-    << "  return " << header.name << "(renderer, vars).render();" << endl
+    << "  " << header.name << "(renderer, target, vars).render();" << endl
     << '}';
   return result.str();
 }
