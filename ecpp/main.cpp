@@ -25,35 +25,37 @@ void throw_template_error(std::string_view error_desc, const std::string& source
   throw std::runtime_error(message.str());
 }
 
-static string path_to_classname(const std::string& path)
+static string path_to_classname(const std::string& path, const std::string& prefix)
 {
+  const string base = prefix.length() ? prefix + '_' + path : path;
   string result;
   bool uppercase = true;
 
   result = "Ecpp";
-  for (unsigned short i = 0 ; i < path.size() ; ++i)
+  for (unsigned short i = 0 ; i < base.size() ; ++i)
   {
-    if (path[i] >= 'a' && path[i] <= 'z' && uppercase)
+    if (base[i] >= 'a' && base[i] <= 'z' && uppercase)
     {
-      result += path[i] - 'a' + 'A';
+      result += base[i] - 'a' + 'A';
       uppercase = false;
     }
-    else if ((path[i] >= 'a' && path[i] <= 'z') || (path[i] >= 'A' && path[i] <= 'Z') || (path[i] >= '0' && path[i] <= '9'))
-      result += path[i];
+    else if ((base[i] >= 'a' && base[i] <= 'z') || (base[i] >= 'A' && base[i] <= 'Z') || (base[i] >= '0' && base[i] <= '9'))
+      result += base[i];
     else if (!uppercase)
       uppercase = true;
   }
   return result;
 }
 
+static string name_to_classname(const std::string& name, const std::string& prefix)
+{
+  return prefix.length() ? prefix + '_' + name : name;
+}
+
 static EcppOptions options_from_command_line(program_options::variables_map options)
 {
   EcppOptions result;
 
-  if (options.count("name"))
-    result.output_name = options["name"].as<string>();
-  else
-    result.output_name = path_to_classname(options["input"].as<string>());
   if (options.count("crails-include"))
   {
     result.crails_include = options["crails-include"].as<string>();
@@ -67,6 +69,12 @@ static EcppOptions options_from_command_line(program_options::variables_map opti
     result.out_property_name = options["out-property-name"].as<string>();
   if (options.count("render-mode"))
     result.body_mode = options["render-mode"].as<string>();
+  if (options.count("function-prefix"))
+    result.function_prefix = options["function-prefix"].as<string>();
+  if (options.count("name"))
+    result.output_name = name_to_classname(options["name"].as<string>());
+  else
+    result.output_name = path_to_classname(options["input"].as<string>(), result.function_prefix.data());
   return result;
 }
 
@@ -83,7 +91,8 @@ int main(int argc, char** argv)
     ("crails-include,c",   program_options::value<std::string>(), "include folder to crails (defaults to `crails`)")
     ("template-type,t",    program_options::value<std::string>(), "name of the template class (default to Crails::Template)")
     ("template-header,z",  program_options::value<std::string>(), "path to the header defining the parent class")
-    ("render-mode,m",      program_options::value<std::string>(), "raw or markup (defaults to `markup`)");
+    ("render-mode,m",      program_options::value<std::string>(), "raw or markup (defaults to `markup`)")
+    ("function-prefix,p",  program_options::value<std::string>(), "use a prefix for the generated template functions (defaults to `render`)");
   program_options::store(program_options::parse_command_line(argc, argv, desc), options);
   program_options::notify(options);
   if (options.count("help"))

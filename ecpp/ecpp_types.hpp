@@ -12,6 +12,7 @@ struct EcppOptions
   std::string_view parent_class      = "Crails::Template";
   std::string_view out_property_name = "ecpp_stream";
   std::string_view body_mode         = "markup";
+  std::string_view function_prefix   = "render";
 };
 
 struct EcppProperty

@@ -75,7 +75,7 @@ static string ecpp_result(const EcppHeader& header, const string& body, const Ec
 
   // Exported function
   result
-    << "void render_" << Crails::underscore(header.name.data())
+    << "void " << options.function_prefix << '_' << Crails::underscore(header.name.data())
     << "(const Crails::Renderer& renderer, Crails::RenderTarget& target, Crails::SharedVars& vars)" << endl
     << '{' << endl
     << "  " << header.name << "(renderer, target, vars).render();" << endl
