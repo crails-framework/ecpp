@@ -7,6 +7,7 @@ void throw_template_error(std::string_view error_desc, const std::string& source
 
 const regex do_pattern("^\\s+do\\s*-?%>");
 const regex end_pattern("^\n?<%\\s*end\\s+");
+const regex yield_begin_alt_pattern("^\\(\\s*\\)\\s+yields\\s*-?%>");
 const regex yield_begin_pattern("^\\)\\s+yields\\s*-?%>");
 const regex yield_end_pattern("^\n?<%\\s*y(ields-)?end\\s+");
 const regex output_delimiter("^\n?<%=");
@@ -91,7 +92,8 @@ void EcppMarkupBody::advance_in_cpp_context()
   }
   else if (try_to_replace_and_advance(end_delimiter, get_end_delimiter_replacement()))
     context = RawContext;
-  else if (try_to_replace_and_advance(yield_begin_pattern, yield_begin))
+  else if (try_to_replace_and_advance(yield_begin_alt_pattern, '(' + yield_begin.substr(2))
+        || try_to_replace_and_advance(yield_begin_pattern, yield_begin))
   {
     context = RawContext;
     yield_depth++;
