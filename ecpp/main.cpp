@@ -9,8 +9,6 @@
 using namespace std;
 using namespace boost;
 
-const string Crails::Renderer::default_format = "*";
-
 std::string ecpp_generate(const std::string& source, const EcppOptions& options);
 
 void throw_template_error(std::string_view error_desc, const std::string& source, unsigned int cursor, unsigned int header_lines)
@@ -47,11 +45,6 @@ static string path_to_classname(const std::string& path, const std::string& pref
   return result;
 }
 
-static string name_to_classname(const std::string& name, const std::string& prefix)
-{
-  return prefix.length() ? prefix + '_' + name : name;
-}
-
 static EcppOptions options_from_command_line(program_options::variables_map options)
 {
   EcppOptions result;
@@ -71,8 +64,13 @@ static EcppOptions options_from_command_line(program_options::variables_map opti
     result.body_mode = options["render-mode"].as<string>();
   if (options.count("function-prefix"))
     result.function_prefix = options["function-prefix"].as<string>();
+  if (options.count("stream-property"))
+  {
+    result.out_property_name = options["stream-property"].as<string>();
+    result.inherited_stream = true;
+  }
   if (options.count("name"))
-    result.output_name = name_to_classname(options["name"].as<string>());
+    result.output_name = options["name"].as<string>();
   else
     result.output_name = path_to_classname(options["input"].as<string>(), result.function_prefix.data());
   return result;
@@ -92,7 +90,8 @@ int main(int argc, char** argv)
     ("template-type,t",    program_options::value<std::string>(), "name of the template class (default to Crails::Template)")
     ("template-header,z",  program_options::value<std::string>(), "path to the header defining the parent class")
     ("render-mode,m",      program_options::value<std::string>(), "raw or markup (defaults to `markup`)")
-    ("function-prefix,p",  program_options::value<std::string>(), "use a prefix for the generated template functions (defaults to `render`)");
+    ("function-prefix,p",  program_options::value<std::string>(), "use a prefix for the generated template functions (defaults to `render`)")
+    ("stream-property",    program_options::value<std::string>(), "use a stream property provided by the template-type");
   program_options::store(program_options::parse_command_line(argc, argv, desc), options);
   program_options::notify(options);
   if (options.count("help"))

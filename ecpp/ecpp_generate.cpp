@@ -10,6 +10,9 @@ static bool property_has_initializer(EcppProperty property) { return property.sh
 static string ecpp_result(const EcppHeader& header, const string& body, const EcppOptions& options)
 {
   stringstream result;
+  string header_fullname = options.function_prefix.length()
+    ? string(options.function_prefix.data()) + '_' + string(header.name)
+    : string(header.name);
 
   result
     << "#include <sstream>" << endl
@@ -21,13 +24,13 @@ static string ecpp_result(const EcppHeader& header, const string& body, const Ec
   result << endl;
 
   result
-    << "class " << header.name << " : public " << options.parent_class << endl
+    << "class " << header_fullname << " : public " << options.parent_class << endl
     << '{' << endl
     << "public:" << endl;
 
   // Constructor and property initializers
   result
-    << "  " << header.name << "(const Crails::Renderer& renderer, Crails::RenderTarget& target, Crails::SharedVars& vars) :" << endl
+    << "  " << header_fullname << "(const Crails::Renderer& renderer, Crails::RenderTarget& target, Crails::SharedVars& vars) :" << endl
     << "    " << options.parent_class << "(renderer, target, vars)";
   for (auto property : header.properties)
   {
@@ -67,8 +70,11 @@ static string ecpp_result(const EcppHeader& header, const string& body, const Ec
     << "  }" << endl;
 
   // Properties
-  result << "private:" << endl
-    << "  std::stringstream " << options.out_property_name << ';' << endl;
+  if (!options.inherited_stream)
+  {
+    result << "private:" << endl
+      << "  std::stringstream " << options.out_property_name << ';' << endl;
+  }
   for (auto property : header.properties)
     result << "  " << property.type << ' ' << property.name << ';' << endl;
   result << "};" << endl << endl;
@@ -78,7 +84,7 @@ static string ecpp_result(const EcppHeader& header, const string& body, const Ec
     << "void " << options.function_prefix << '_' << Crails::underscore(header.name.data())
     << "(const Crails::Renderer& renderer, Crails::RenderTarget& target, Crails::SharedVars& vars)" << endl
     << '{' << endl
-    << "  " << header.name << "(renderer, target, vars).render();" << endl
+    << "  " << header_fullname << "(renderer, target, vars).render();" << endl
     << '}';
   return result.str();
 }

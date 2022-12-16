@@ -10,6 +10,7 @@ struct EcppOptions
   std::string_view crails_include    = "crails/";
   std::string      parent_header     = "crails/template.hpp";
   std::string_view parent_class      = "Crails::Template";
+  bool             inherited_stream  = false;
   std::string_view out_property_name = "ecpp_stream";
   std::string_view body_mode         = "markup";
   std::string_view function_prefix   = "render";
