@@ -49,7 +49,7 @@ EcppPropertyParser::EcppPropertyParser(const std::string& source, unsigned int& 
       advance_value();
   }
   initialize_property_status(property);
-  if (property.reference && !property.shared)
+  if (property.reference && !property.shared && !property.default_value)
     throw_template_error("unshared reference (probably missing a @)", source, cursor, -1);
 }
 
