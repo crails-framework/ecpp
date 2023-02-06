@@ -109,6 +109,7 @@ void EcppPropertyParser::advance_name()
       context = Aborted;
     else if (source[cursor] == '=' || source[cursor] == '(')
     {
+      value_is_constructor = source[cursor] == '(';
       pattern_begin = cursor + 1;
       context = Value;
     }
@@ -137,6 +138,8 @@ void EcppPropertyParser::advance_value()
   if (source[cursor] == ';')
   {
     property.default_value = source.substr(pattern_begin, cursor - pattern_begin);
+    if (value_is_constructor) // last charcter will be ')' and should be removed
+      property.default_value->pop_back();
     context = Aborted;
   }
   cursor++;
