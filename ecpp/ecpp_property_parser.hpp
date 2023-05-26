@@ -24,5 +24,5 @@ private:
   Context            context;
   int                template_depth = 0;
   int                parentheses_depth = 0;
-  bool               value_is_constructor;
+  bool               value_is_constructor = false;
 };
