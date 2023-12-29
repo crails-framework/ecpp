@@ -66,7 +66,9 @@ static string ecpp_result(const EcppHeader& header, const string& body, const Ec
     << "  void render()" << endl
     << "  {" << endl
     << body << endl
-    << "    this->target.set_body(" << options.out_property_name << ".str());" << endl
+    << "    std::string _out_buffer = " << options.out_property_name << ".str();" << endl
+    << "    _out_buffer = this->apply_post_render_filters(_out_buffer);" << endl
+    << "    this->target.set_body(_out_buffer);" << endl
     << "  }" << endl;
 
   // Properties
