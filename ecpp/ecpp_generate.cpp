@@ -48,9 +48,9 @@ static string ecpp_result(const EcppHeader& header, const string& body, const Ec
           result << "reinterpret_cast<" << property.type << ">(*";
         }
         if (property.default_value.has_value())
-          result << "Crails::cast<" << casting_type << ">(vars, \"" << property.name << "\", " << property.default_value.value() << ')';
+          result << "Crails::cast< " << casting_type << " >(vars, \"" << property.name << "\", " << property.default_value.value() << ')';
         else
-          result << "Crails::cast<" << casting_type << ">(vars, \"" << property.name << "\")";
+          result << "Crails::cast< " << casting_type << " >(vars, \"" << property.name << "\")";
         if (property.reference)
           result << ')';
         result << ')';
