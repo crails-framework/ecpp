@@ -4,7 +4,7 @@
 
 class EcppHeaderParser : public EcppHeader
 {
-  enum Context { Lookup, Property, Namespace, Typedef, Preprocessor, Comment, MultilineComment };
+  enum Context { Lookup, Property, Namespace, Typedef, Extern, Preprocessor, Comment, MultilineComment };
 public:
   EcppHeaderParser(std::string_view name, const std::string& source);
 

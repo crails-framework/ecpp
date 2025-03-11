@@ -11,16 +11,27 @@ EcppHeaderParser::EcppHeaderParser(string_view name, const string& source) : sou
   { if (source[i] == '\n') line_count++; }
   while (cursor < source.length())
   {
-    if (context == Lookup)
+    switch (context)
+    {
+    case Lookup:
       advance_lookup();
-    else if (context == Preprocessor)
+      break ;
+    case Preprocessor:
       advance_preprocessor();
-    else if (context == Typedef || context == Namespace)
+      break ;
+    case Typedef:
+    case Namespace:
+    case Extern:
       advance_typedef_or_namespace();
-    else if (context == Comment || context == MultilineComment)
+      break ;
+    case Comment:
+    case MultilineComment:
       advance_comment();
-    else if (context == Property)
+      break ;
+    case Property:
       advance_property();
+      break ;
+    }
   }
 }
 
@@ -41,6 +52,11 @@ void EcppHeaderParser::advance_lookup()
   {
     context = Namespace;
     cursor += 6;
+  }
+  else if (source.substr(cursor, 7) == "extern ")
+  {
+    context = Extern;
+    cursor += 7;
   }
   else if (source[cursor] == '/' && source[cursor + 1] == '/')
   {
