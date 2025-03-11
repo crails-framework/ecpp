@@ -3,6 +3,7 @@
 #include <crails/renderer.hpp>
 #include <boost/program_options.hpp>
 #include <iostream>
+#include <fstream>
 #include "ecpp_header_parser.hpp"
 #include "ecpp_body.hpp"
 
@@ -45,6 +46,8 @@ static string path_to_classname(const std::string& path, const std::string& pref
   return result;
 }
 
+static std::ofstream* output_stream;
+
 static EcppOptions options_from_command_line(program_options::variables_map options)
 {
   EcppOptions result;
@@ -73,6 +76,16 @@ static EcppOptions options_from_command_line(program_options::variables_map opti
     result.output_name = options["name"].as<string>();
   else
     result.output_name = path_to_classname(options["input"].as<string>(), result.function_prefix.data());
+  if (options.count("output"))
+  {
+    output_stream = new std::ofstream(options["output"].as<string>());
+    if (output_stream->is_open())
+      result.output = output_stream;
+    else
+      throw std::runtime_error("Failed to open `" + options["output"].as<string>() + '`');
+  }
+  else
+    result.output = &std::cout;
   return result;
 }
 
@@ -86,6 +99,7 @@ int main(int argc, char** argv)
     ("help,h",             "product help message")
     ("name,n",             program_options::value<std::string>(), "class name for your template")
     ("input,i",            program_options::value<std::string>(), "ecpp source to process")
+    ("output,o",           program_options::value<std::string>(), "output file")
     ("crails-include,c",   program_options::value<std::string>(), "include folder to crails (defaults to `crails`)")
     ("template-type,t",    program_options::value<std::string>(), "name of the template class (default to Crails::Template)")
     ("template-header,z",  program_options::value<std::string>(), "path to the header defining the parent class")
@@ -102,13 +116,20 @@ int main(int argc, char** argv)
   {
     try
     {
-      std::cout << ecpp_generate(input, options_from_command_line(options));
+       EcppOptions ecpp_options = options_from_command_line(options);
+
+       *ecpp_options.output << ecpp_generate(input, ecpp_options);
     }
     catch (const std::runtime_error& e)
     {
       std::cerr << options["input"].as<string>() << ": " << e.what() << std::endl;
       return -1;
     }
+  }
+  if (output_stream)
+  {
+    output_stream->close();
+    delete output_stream;
   }
   return 0;
 }

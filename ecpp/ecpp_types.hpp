@@ -3,9 +3,11 @@
 #include <string_view>
 #include <optional>
 #include <vector>
+#include <ostream>
 
 struct EcppOptions
 {
+  std::ostream*    output            = nullptr;
   std::string      output_name;
   std::string_view crails_include    = "crails/";
   std::string      parent_header     = "crails/template.hpp";
