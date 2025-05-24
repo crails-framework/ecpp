@@ -7,15 +7,15 @@
 
 struct EcppOptions
 {
-  std::ostream*    output            = nullptr;
-  std::string      output_name;
-  std::string_view crails_include    = "crails/";
-  std::string      parent_header     = "crails/template.hpp";
-  std::string_view parent_class      = "Crails::Template";
-  bool             inherited_stream  = false;
-  std::string_view out_property_name = "ecpp_stream";
-  std::string_view body_mode         = "markup";
-  std::string_view function_prefix   = "render";
+  std::ostream* output            = nullptr;
+  std::string   output_name;
+  std::string   crails_include    = "crails/";
+  std::string   parent_header     = "crails/template.hpp";
+  std::string   parent_class      = "Crails::Template";
+  bool          inherited_stream  = false;
+  std::string   out_property_name = "ecpp_stream";
+  std::string   body_mode         = "markup";
+  std::string   function_prefix   = "render";
 };
 
 struct EcppProperty
