@@ -15,7 +15,7 @@ static string ecpp_result(const EcppHeader& header, const string& body, const Ec
     : string(header.name);
 
   result
-    << "#include <sstream>" << endl
+    << "#include <crails/template_stream.hpp>" << endl
     << "#include \"" << options.crails_include << "render_target.hpp\"" << endl
     << "#include \"" << options.crails_include << "shared_vars.hpp\"" << endl
     << "#include \"" << options.parent_header << '"' << endl;
@@ -65,17 +65,19 @@ static string ecpp_result(const EcppHeader& header, const string& body, const Ec
   result
     << "  void render()" << endl
     << "  {" << endl
+    << "    " << options.out_property_name << ".reserve(" << (body.length() * 2) << ");" << endl
+    << "    // BEGIN TEMPLATE BODY" << endl
     << body << endl
-    << "    std::string _out_buffer = " << options.out_property_name << ".str();" << endl
-    << "    _out_buffer = this->apply_post_render_filters(_out_buffer);" << endl
-    << "    this->target.set_body(_out_buffer);" << endl
+    << "    // END TEMPLATE BODY" << endl
+    << "    std::string _out_buffer = std::move(" << options.out_property_name << ").extract();" << endl
+    << "    this->target.set_body(this->apply_post_render_filters(std::move(_out_buffer)));" << endl
     << "  }" << endl;
 
   // Properties
   if (!options.inherited_stream)
   {
     result << "private:" << endl
-      << "  std::stringstream " << options.out_property_name << ';' << endl;
+      << "  Crails::TemplateStream " << options.out_property_name << ';' << endl;
   }
   for (auto property : header.properties)
     result << "  " << property.type << ' ' << property.name << ';' << endl;

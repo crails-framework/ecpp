@@ -7,7 +7,7 @@ struct EcppMarkupBody : public std::stringstream
 {
   enum EcppBodyContext { RawContext, CppContext, CppOutputContext, CppYieldContext };
 public:
-  EcppMarkupBody(const std::string& source, unsigned int header_lines = 0, std::string_view out_property_name = "ecpp_stream");
+  EcppMarkupBody(const std::string& source, unsigned int header_lines = 0, std::string_view out_property_name = "Crails::Template::stream");
 
 private:
   std::string get_end_delimiter_replacement() const;
