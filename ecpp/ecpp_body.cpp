@@ -20,8 +20,8 @@ const string_view escaped_begin_delimiter_with_line_return = "\n<%%";
 
 EcppMarkupBody::EcppMarkupBody(const string& source, unsigned int header_lines, string_view out_property_name) : source(source), header_lines(header_lines), out_property_name(out_property_name)
 {
-  yield_begin = ", [&]() -> std::string { std::stringstream " + string(out_property_name) + get_end_delimiter_replacement();
-  yield_end   = "\";\n  return " + string(out_property_name) + ".str();\n  }))";
+  yield_begin = ", [&]() -> std::string { Crails::TemplateStream " + string(out_property_name) + get_end_delimiter_replacement();
+  yield_end   = "\";\n  return std::move(" + string(out_property_name) + ").extract();\n  }))";
   *this << out_property_name << " << \"";
   while (cursor < source.length())
   {
